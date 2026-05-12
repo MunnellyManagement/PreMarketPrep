@@ -1,10 +1,397 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pre-Market Structure Audit</title>
+  <style>
+    :root {
+      --bg: #070a0f;
+      --panel: #0f1623;
+      --panel-light: #151f2f;
+      --border: #263244;
+      --text: #f4f7fb;
+      --muted: #8f9bad;
+      --accent: #f4c430;
+      --green: #32d583;
+      --red: #ff5c5c;
+      --blue: #5ea1ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(244, 196, 48, 0.12), transparent 30%),
+        linear-gradient(180deg, #090d14 0%, #05070b 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 40px 18px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(32px, 6vw, 58px);
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -0.05em;
+      margin-bottom: 18px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .progress-wrap {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    .progress-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .progress-label {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+    }
+
+    .score {
+      color: var(--accent);
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #1a2433;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), #ffe58a);
+      transition: width 0.25s ease;
+    }
+
+    .questions {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel-light), var(--panel));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      transition: 0.2s ease;
+    }
+
+    .card.active {
+      border-color: rgba(244, 196, 48, 0.65);
+      box-shadow: 0 0 0 1px rgba(244, 196, 48, 0.15), 0 18px 45px rgba(0, 0, 0, 0.25);
+    }
+
+    .q-head {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .q-num {
+      min-width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: rgba(244, 196, 48, 0.1);
+      border: 1px solid rgba(244, 196, 48, 0.3);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .q-title {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .q-question {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .q-help {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 15px;
+      margin-bottom: 18px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 11px 15px;
+      font-weight: 800;
+      color: var(--text);
+      background: #202b3b;
+      transition: 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: #2a374a;
+    }
+
+    button.selected {
+      background: var(--accent);
+      color: #111;
+    }
+
+    .reset {
+      width: 100%;
+      margin-top: 22px;
+      padding: 15px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .reset:hover {
+      color: var(--text);
+      border-color: var(--accent);
+      background: rgba(244, 196, 48, 0.06);
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 26px 14px;
+      }
+
+      .progress-wrap,
+      .card {
+        border-radius: 18px;
+        padding: 18px;
+      }
+
+      .q-head {
+        flex-direction: column;
+      }
+
+      .q-question {
+        font-size: 20px;
+      }
+
+      .actions button {
+        flex: 1;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Pre-Market Structure Audit</h1>
-  <p>Your website is live.</p>
+  <main class="app">
+    <section class="header">
+      <div class="eyebrow">Auction Market Audit</div>
+      <h1>Pre-Market<br />Structure Audit</h1>
+      <p class="subtitle">A five-step checklist for reading overnight auction context before the RTH open.</p>
+    </section>
+
+    <section class="progress-wrap">
+      <div class="progress-top">
+        <div class="progress-label">Completion</div>
+        <div class="score"><span id="score">0</span>/5</div>
+      </div>
+      <div class="bar">
+        <div class="bar-fill" id="barFill"></div>
+      </div>
+    </section>
+
+    <section class="questions">
+      <article class="card" data-question="1">
+        <div class="q-head">
+          <div class="q-num">Q1</div>
+          <div>
+            <div class="q-title">Overnight Session</div>
+            <div class="q-question">Where did overnight seek value?</div>
+          </div>
+        </div>
+        <p class="q-help">Did Globex explore above, below, or stay inside prior RTH value area?</p>
+        <div class="actions">
+          <button>Above Value</button>
+          <button>Below Value</button>
+          <button>Inside Value</button>
+        </div>
+      </article>
+
+      <article class="card" data-question="2">
+        <div class="q-head">
+          <div class="q-num">Q2</div>
+          <div>
+            <div class="q-title">Overnight Close</div>
+            <div class="q-question">Did overnight close confirm the direction?</div>
+          </div>
+        </div>
+        <p class="q-help">A close in the direction of the probe = commitment. Close back inside = probe only.</p>
+        <div class="actions">
+          <button>Confirmed</button>
+          <button>Probe Only</button>
+          <button>Unclear</button>
+        </div>
+      </article>
+
+      <article class="card" data-question="3">
+        <div class="q-head">
+          <div class="q-num">Q3</div>
+          <div>
+            <div class="q-title">Price Location</div>
+            <div class="q-question">Is price currently testing the prior session extreme?</div>
+          </div>
+        </div>
+        <p class="q-help">Both setups require price at a key level — if not there yet, wait for it to come.</p>
+        <div class="actions">
+          <button>Testing High</button>
+          <button>Testing Low</button>
+          <button>Not Yet</button>
+        </div>
+      </article>
+
+      <article class="card" data-question="4">
+        <div class="q-head">
+          <div class="q-num">Q4</div>
+          <div>
+            <div class="q-title">Rejection at Extreme</div>
+            <div class="q-question">Was there a clear rejection at the extreme?</div>
+          </div>
+        </div>
+        <p class="q-help">Decisive buyer/seller response at the level = failed auction signal. Accepted through = continuation signal.</p>
+        <div class="actions">
+          <button>Rejected</button>
+          <button>Accepted Through</button>
+          <button>No Signal</button>
+        </div>
+      </article>
+
+      <article class="card" data-question="5">
+        <div class="q-head">
+          <div class="q-num">Q5</div>
+          <div>
+            <div class="q-title">Value Area Location</div>
+            <div class="q-question">Is price inside or outside prior RTH value area?</div>
+          </div>
+        </div>
+        <p class="q-help">Outside value = directional auction in play. Inside value = balanced, mean reversion favoured.</p>
+        <div class="actions">
+          <button>Outside Value</button>
+          <button>Inside Value</button>
+          <button>At Edge</button>
+        </div>
+      </article>
+    </section>
+
+    <button class="reset" id="resetBtn">Reset Audit</button>
+    <p class="footer-note">For educational auction-market preparation only.</p>
+  </main>
+
+  <script>
+    const cards = document.querySelectorAll(".card");
+    const scoreEl = document.getElementById("score");
+    const barFill = document.getElementById("barFill");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function updateProgress() {
+      const completed = document.querySelectorAll(".card.active").length;
+      scoreEl.textContent = completed;
+      barFill.style.width = `${(completed / 5) * 100}%`;
+    }
+
+    cards.forEach(card => {
+      const buttons = card.querySelectorAll("button");
+
+      buttons.forEach(button => {
+        button.addEventListener("click", () => {
+          buttons.forEach(btn => btn.classList.remove("selected"));
+          button.classList.add("selected");
+          card.classList.add("active");
+          updateProgress();
+        });
+      });
+    });
+
+    card.addEventListener("dblclick", () => {
+      card.classList.remove("active");
+      card.querySelectorAll("button").forEach(btn => btn.classList.remove("selected"));
+      updateProgress();
+    });
+  });
+
+    resetBtn.addEventListener("click", () => {
+      cards.forEach(card => {
+        card.classList.remove("active");
+        card.querySelectorAll("button").forEach(btn => btn.classList.remove("selected"));
+      });
+
+      updateProgress();
+    });
+
+    updateProgress();
+  </script>
 </body>
 </html>
