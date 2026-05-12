@@ -4,7 +4,7 @@ A simple pre-market preparation dashboard/site for market planning and trading p
 
 ## Live Site
 
-https://project-bv4lx.vercel.app
+https://prremarketprep.vercel.app
 
 ## Files
 
