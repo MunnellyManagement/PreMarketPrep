@@ -4,394 +4,945 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pre-Market Structure Audit</title>
+
   <style>
     :root {
-      --bg: #070a0f;
-      --panel: #0f1623;
-      --panel-light: #151f2f;
+      --bg: #070910;
+      --panel: #0d111b;
+      --panel-soft: #111827;
       --border: #263244;
-      --text: #f4f7fb;
-      --muted: #8f9bad;
-      --accent: #f4c430;
-      --green: #32d583;
-      --red: #ff5c5c;
-      --blue: #5ea1ff;
+      --text: #e5e7eb;
+      --muted: #738096;
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.12);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.12);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.12);
+      --blue: #60a5fa;
+      --white: #f8fafc;
     }
 
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
 
     body {
-      min-height: 100vh;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(244, 196, 48, 0.12), transparent 30%),
-        linear-gradient(180deg, #090d14 0%, #05070b 100%);
+      margin: 0;
+      background: var(--bg);
       color: var(--text);
-      display: flex;
-      justify-content: center;
-      padding: 40px 18px;
+      font-family: "Inter", Arial, sans-serif;
+      letter-spacing: 0.02em;
     }
 
-    .app {
-      width: 100%;
-      max-width: 760px;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
-    .eyebrow {
-      color: var(--accent);
-      font-size: 13px;
-      letter-spacing: 0.22em;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    h1 {
-      font-size: clamp(32px, 6vw, 58px);
-      line-height: 0.95;
-      text-transform: uppercase;
-      letter-spacing: -0.05em;
-      margin-bottom: 18px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    .progress-wrap {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 22px;
-      margin-bottom: 22px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
-    }
-
-    .progress-top {
+    header {
+      height: 58px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      padding: 0 18px;
+      background: #090c14;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
-    .progress-label {
-      color: var(--muted);
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-weight: 700;
-    }
-
-    .score {
-      color: var(--accent);
-      font-size: 28px;
-      font-weight: 800;
-    }
-
-    .bar {
-      height: 10px;
-      border-radius: 999px;
-      background: #1a2433;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      width: 0%;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), #ffe58a);
-      transition: width 0.25s ease;
-    }
-
-    .questions {
-      display: grid;
-      gap: 16px;
-    }
-
-    .card {
-      background: linear-gradient(180deg, var(--panel-light), var(--panel));
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 22px;
-      transition: 0.2s ease;
-    }
-
-    .card.active {
-      border-color: rgba(244, 196, 48, 0.65);
-      box-shadow: 0 0 0 1px rgba(244, 196, 48, 0.15), 0 18px 45px rgba(0, 0, 0, 0.25);
-    }
-
-    .q-head {
+    .brand {
       display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .q-num {
-      min-width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      background: rgba(244, 196, 48, 0.1);
-      border: 1px solid rgba(244, 196, 48, 0.3);
-      color: var(--accent);
-      display: grid;
-      place-items: center;
+      align-items: center;
+      gap: 10px;
       font-weight: 900;
-    }
-
-    .q-title {
+      letter-spacing: 0.25em;
       font-size: 13px;
-      color: var(--accent);
+      color: #cbd5e1;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--green);
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    nav button {
+      background: #111827;
+      color: #94a3b8;
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      border-radius: 4px;
       font-weight: 800;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    nav button.active {
+      background: #1f2937;
+      color: #ffffff;
+      border-color: #4b5563;
+    }
+
+    main {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 18px 60px;
+      border-left: 1px solid #12352f;
+      border-right: 1px solid #12352f;
+      min-height: calc(100vh - 58px);
+    }
+
+    .screen {
+      display: none;
+      padding-top: 18px;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .question {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 18px;
+      margin-bottom: 12px;
+      border-radius: 5px;
+      transition: 0.2s;
+    }
+
+    .question.green {
+      border-color: rgba(16, 185, 129, 0.6);
+      background: rgba(16, 185, 129, 0.06);
+    }
+
+    .question.red {
+      border-color: rgba(239, 68, 68, 0.6);
+      background: rgba(239, 68, 68, 0.06);
+    }
+
+    .question.amber {
+      border-color: rgba(245, 158, 11, 0.6);
+      background: rgba(245, 158, 11, 0.06);
+    }
+
+    .question.neutral {
+      border-color: #374151;
+    }
+
+    .eyebrow {
+      color: #566176;
+      font-size: 11px;
+      letter-spacing: 0.26em;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h2 {
+      font-size: 17px;
       margin-bottom: 6px;
+      color: #f3f4f6;
     }
 
-    .q-question {
-      font-size: 22px;
-      font-weight: 800;
-      line-height: 1.15;
-    }
-
-    .q-help {
+    .help {
+      font-size: 13px;
       color: var(--muted);
-      line-height: 1.55;
-      font-size: 15px;
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px;
+    }
+
+    .option {
+      background: transparent;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      padding: 12px 10px;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: 0.15s;
+    }
+
+    .option:hover {
+      border-color: #64748b;
+      color: #fff;
+    }
+
+    .option.selected.green {
+      background: var(--green-bg);
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    .option.selected.red {
+      background: var(--red-bg);
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    .option.selected.amber {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+
+    .option.selected.neutral {
+      background: rgba(148, 163, 184, 0.14);
+      color: #dbeafe;
+      border-color: #94a3b8;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    .feedback.green {
+      color: var(--green);
+    }
+
+    .feedback.red {
+      color: var(--red);
+    }
+
+    .feedback.amber {
+      color: var(--amber);
+    }
+
+    .feedback.neutral {
+      color: #cbd5e1;
+    }
+
+    .determine {
+      width: 100%;
+      padding: 18px;
+      background: #e5e7eb;
+      color: #111827;
+      border: 2px solid #ffffff;
+      border-radius: 4px;
+      font-weight: 1000;
+      letter-spacing: 0.25em;
+      cursor: pointer;
+      margin: 10px 0 18px;
+      box-shadow: inset 0 0 0 1px #64748b;
+    }
+
+    .determine:hover {
+      background: #ffffff;
+    }
+
+    .result {
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.07);
+      padding: 20px;
+      border-radius: 5px;
+      border-left: 5px solid var(--amber);
       margin-bottom: 18px;
     }
 
-    .actions {
+    .result.go {
+      border-color: rgba(16, 185, 129, 0.55);
+      border-left-color: var(--green);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .result.stop {
+      border-color: rgba(239, 68, 68, 0.55);
+      border-left-color: var(--red);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .result.wait {
+      border-color: rgba(245, 158, 11, 0.55);
+      border-left-color: var(--amber);
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .result-head {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
     }
 
-    button {
-      border: 0;
-      cursor: pointer;
-      border-radius: 14px;
-      padding: 11px 15px;
-      font-weight: 800;
-      color: var(--text);
-      background: #202b3b;
-      transition: 0.18s ease;
+    .label {
+      display: inline-block;
+      border: 1px solid currentColor;
+      padding: 5px 11px;
+      font-size: 11px;
+      font-weight: 1000;
+      letter-spacing: 0.16em;
+      border-radius: 3px;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      background: #2a374a;
+    .result h1 {
+      margin: 6px 0;
+      font-size: 26px;
+      letter-spacing: 0.04em;
     }
 
-    button.selected {
-      background: var(--accent);
-      color: #111;
+    .result .sub {
+      font-weight: 900;
+      color: var(--amber);
+      margin-bottom: 14px;
     }
 
-    .reset {
-      width: 100%;
-      margin-top: 22px;
-      padding: 15px;
-      background: transparent;
+    .result.go .sub {
+      color: var(--green);
+    }
+
+    .result.stop .sub {
+      color: var(--red);
+    }
+
+    .result p {
+      color: #aab4c5;
+      line-height: 1.55;
+      margin-bottom: 0;
+    }
+
+    .grades {
       border: 1px solid var(--border);
-      color: var(--muted);
+      background: var(--panel);
+      padding: 18px;
+      border-radius: 5px;
     }
 
-    .reset:hover {
-      color: var(--text);
-      border-color: var(--accent);
-      background: rgba(244, 196, 48, 0.06);
+    .grade-card {
+      border: 1px solid #334155;
+      padding: 16px;
+      border-radius: 4px;
+      margin-top: 12px;
+      background: #0b1220;
     }
 
-    .footer-note {
-      text-align: center;
+    .grade-card.good {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .grade-card.warn {
+      border-color: rgba(245, 158, 11, 0.5);
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .grade-card.bad {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .grade-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .grade-title {
+      font-weight: 1000;
+      color: #f3f4f6;
+    }
+
+    .pill {
+      border: 1px solid currentColor;
+      padding: 4px 10px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 1000;
+      letter-spacing: 0.14em;
+    }
+
+    .good .pill {
+      color: var(--green);
+    }
+
+    .warn .pill {
+      color: var(--amber);
+    }
+
+    .bad .pill {
+      color: var(--red);
+    }
+
+    .grade-card p {
+      color: #9ca3af;
+      line-height: 1.5;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .form-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      margin-bottom: 7px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background: #070b13;
+      color: #e5e7eb;
+      border: 1px solid #334155;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 14px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .action {
+      background: #1f2937;
+      color: white;
+      border: 1px solid #475569;
+      padding: 12px 16px;
+      border-radius: 4px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .action.green {
+      background: rgba(16, 185, 129, 0.14);
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    .small {
       color: var(--muted);
       font-size: 13px;
-      margin-top: 18px;
+      line-height: 1.5;
     }
 
-    @media (max-width: 560px) {
-      body {
-        padding: 26px 14px;
-      }
+    .journal-entry {
+      border: 1px solid #334155;
+      padding: 14px;
+      border-radius: 4px;
+      margin-top: 12px;
+      background: #0b1220;
+    }
 
-      .progress-wrap,
-      .card {
-        border-radius: 18px;
-        padding: 18px;
-      }
+    .journal-entry strong {
+      color: #f3f4f6;
+    }
 
-      .q-head {
+    .journal-entry p {
+      color: #9ca3af;
+      margin-bottom: 0;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 650px) {
+      header {
+        height: auto;
+        padding: 14px;
+        align-items: flex-start;
+        gap: 12px;
         flex-direction: column;
       }
 
-      .q-question {
-        font-size: 20px;
+      nav {
+        width: 100%;
       }
 
-      .actions button {
+      nav button {
         flex: 1;
+      }
+
+      main {
+        border: none;
+      }
+
+      .brand {
+        font-size: 11px;
+      }
+
+      .result-head {
+        flex-direction: column;
       }
     }
   </style>
 </head>
+
 <body>
-  <main class="app">
-    <section class="header">
-      <div class="eyebrow">Auction Market Audit</div>
-      <h1>Pre-Market<br />Structure Audit</h1>
-      <p class="subtitle">A five-step checklist for reading overnight auction context before the RTH open.</p>
-    </section>
+  <header>
+    <div class="brand">
+      <span class="dot"></span>
+      PRE-MARKET STRUCTURE AUDIT
+    </div>
 
-    <section class="progress-wrap">
-      <div class="progress-top">
-        <div class="progress-label">Completion</div>
-        <div class="score"><span id="score">0</span>/5</div>
+    <nav>
+      <button class="tab active" data-screen="audit">AUDIT</button>
+      <button class="tab" data-screen="gamma">GAMMA</button>
+      <button class="tab" data-screen="journal">JOURNAL</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="audit" class="screen active">
+      <div class="question" data-question="overnight">
+        <div class="eyebrow">Q1 — OVERNIGHT SESSION</div>
+        <h2>Where did overnight seek value?</h2>
+        <p class="help">Did Globex explore above, below, or stay inside prior RTH value area?</p>
+
+        <div class="options">
+          <button class="option" data-value="above" data-color="green">
+            Sought Value Above
+          </button>
+          <button class="option" data-value="below" data-color="green">
+            Sought Value Below
+          </button>
+          <button class="option" data-value="inside" data-color="neutral">
+            Stayed Inside Value
+          </button>
+        </div>
+
+        <div class="feedback"></div>
       </div>
-      <div class="bar">
-        <div class="bar-fill" id="barFill"></div>
+
+      <div class="question" data-question="close">
+        <div class="eyebrow">Q2 — OVERNIGHT CLOSE</div>
+        <h2>Did overnight close confirm the direction?</h2>
+        <p class="help">A close in the direction of the probe means commitment. Close back inside means probe only.</p>
+
+        <div class="options">
+          <button class="option" data-value="yes" data-color="green">
+            Yes — Closed in Direction
+          </button>
+          <button class="option" data-value="no" data-color="red">
+            No — Closed Back Inside
+          </button>
+        </div>
+
+        <div class="feedback"></div>
+      </div>
+
+      <div class="question" data-question="extreme">
+        <div class="eyebrow">Q3 — PRICE LOCATION</div>
+        <h2>Is price currently testing the prior session extreme?</h2>
+        <p class="help">Both setups require price at a key level. If price is not there yet, wait for it to come.</p>
+
+        <div class="options">
+          <button class="option" data-value="yes" data-color="green">
+            Yes — Testing / At Extreme
+          </button>
+          <button class="option" data-value="no" data-color="neutral">
+            No — Away from Extreme
+          </button>
+        </div>
+
+        <div class="feedback"></div>
+      </div>
+
+      <div class="question" data-question="rejection">
+        <div class="eyebrow">Q4 — REJECTION AT EXTREME</div>
+        <h2>Was there a clear rejection at the extreme?</h2>
+        <p class="help">Decisive buyer/seller response at the level equals failed auction signal. Accepted through equals continuation signal.</p>
+
+        <div class="options">
+          <button class="option" data-value="yes" data-color="red">
+            Yes — Clear Rejection
+          </button>
+          <button class="option" data-value="no" data-color="green">
+            No — Accepted Through
+          </button>
+        </div>
+
+        <div class="feedback"></div>
+      </div>
+
+      <div class="question" data-question="value">
+        <div class="eyebrow">Q5 — VALUE AREA LOCATION</div>
+        <h2>Is price inside or outside prior RTH value area?</h2>
+        <p class="help">Outside value means directional auction in play. Inside value means balanced conditions and mean reversion favoured.</p>
+
+        <div class="options">
+          <button class="option" data-value="outside" data-color="green">
+            Outside Prior Balance
+          </button>
+          <button class="option" data-value="inside" data-color="amber">
+            Inside Prior Balance
+          </button>
+        </div>
+
+        <div class="feedback"></div>
+      </div>
+
+      <button class="determine" id="determineBtn">
+        DETERMINE SETUP EDGE
+      </button>
+
+      <section class="result wait" id="resultBox">
+        <div class="result-head">
+          <div>
+            <div class="eyebrow">TODAY'S DOMINANT SETUP</div>
+            <h1 id="resultTitle">WAIT — NO CLEAR EDGE</h1>
+            <div class="sub" id="resultSub">Incomplete Structure</div>
+          </div>
+          <span class="label" id="resultLabel">WAIT</span>
+        </div>
+
+        <p id="resultText">
+          Complete the audit questions above. The app will classify the structure as failed auction, continuation, or no clear edge.
+        </p>
+      </section>
+
+      <section class="grades">
+        <div class="eyebrow">SETUP GRADES TODAY</div>
+
+        <div class="grade-card warn" id="failedGrade">
+          <div class="grade-top">
+            <div class="grade-title">FAILED AUCTION / MEAN REVERSION</div>
+            <span class="pill">WAIT</span>
+          </div>
+          <p>
+            Best when overnight probes outside value, fails to close with commitment, rejects the extreme, then returns inside prior balance.
+          </p>
+        </div>
+
+        <div class="grade-card warn" id="continuationGrade">
+          <div class="grade-top">
+            <div class="grade-title">CONTINUATION / ACCEPTANCE</div>
+            <span class="pill">WAIT</span>
+          </div>
+          <p>
+            Best when overnight probes directionally, closes with commitment, accepts through the extreme, and holds outside prior balance.
+          </p>
+        </div>
+      </section>
+    </section>
+
+    <section id="gamma" class="screen">
+      <div class="form-card">
+        <div class="eyebrow">GAMMA DASHBOARD</div>
+        <h2>Market Gamma Context</h2>
+        <p class="small">
+          Use this section to record gamma conditions before running the structure audit.
+        </p>
+
+        <label for="gammaBias">Gamma Bias</label>
+        <select id="gammaBias">
+          <option value="">Select gamma condition</option>
+          <option>Positive Gamma — Range / Mean Reversion</option>
+          <option>Negative Gamma — Expansion / Trend Risk</option>
+          <option>Neutral Gamma — Structure Leads</option>
+        </select>
+
+        <label for="spotPrice">Current Spot Price</label>
+        <input id="spotPrice" placeholder="Example: ES 5325.25" />
+
+        <label for="keyGamma">Key Gamma / Dealer Levels</label>
+        <textarea id="keyGamma" placeholder="Example: Call wall, put wall, zero gamma level, large OI strikes..."></textarea>
+
+        <button class="action green" id="saveGamma">SAVE GAMMA NOTES</button>
+      </div>
+
+      <div class="form-card">
+        <div class="eyebrow">SAVED GAMMA NOTES</div>
+        <p class="small" id="gammaSaved">No gamma notes saved yet.</p>
       </div>
     </section>
 
-    <section class="questions">
-      <article class="card" data-question="1">
-        <div class="q-head">
-          <div class="q-num">Q1</div>
-          <div>
-            <div class="q-title">Overnight Session</div>
-            <div class="q-question">Where did overnight seek value?</div>
-          </div>
-        </div>
-        <p class="q-help">Did Globex explore above, below, or stay inside prior RTH value area?</p>
-        <div class="actions">
-          <button>Above Value</button>
-          <button>Below Value</button>
-          <button>Inside Value</button>
-        </div>
-      </article>
+    <section id="journal" class="screen">
+      <div class="form-card">
+        <div class="eyebrow">TRADE JOURNAL</div>
+        <h2>Save Today's Pre-Market Read</h2>
 
-      <article class="card" data-question="2">
-        <div class="q-head">
-          <div class="q-num">Q2</div>
-          <div>
-            <div class="q-title">Overnight Close</div>
-            <div class="q-question">Did overnight close confirm the direction?</div>
-          </div>
-        </div>
-        <p class="q-help">A close in the direction of the probe = commitment. Close back inside = probe only.</p>
-        <div class="actions">
-          <button>Confirmed</button>
-          <button>Probe Only</button>
-          <button>Unclear</button>
-        </div>
-      </article>
+        <label for="journalBias">Session Bias</label>
+        <input id="journalBias" placeholder="Example: Wait for failed auction at prior high" />
 
-      <article class="card" data-question="3">
-        <div class="q-head">
-          <div class="q-num">Q3</div>
-          <div>
-            <div class="q-title">Price Location</div>
-            <div class="q-question">Is price currently testing the prior session extreme?</div>
-          </div>
-        </div>
-        <p class="q-help">Both setups require price at a key level — if not there yet, wait for it to come.</p>
-        <div class="actions">
-          <button>Testing High</button>
-          <button>Testing Low</button>
-          <button>Not Yet</button>
-        </div>
-      </article>
+        <label for="journalNotes">Notes</label>
+        <textarea id="journalNotes" placeholder="Write your pre-market plan, invalidation, levels, and execution rules..."></textarea>
 
-      <article class="card" data-question="4">
-        <div class="q-head">
-          <div class="q-num">Q4</div>
-          <div>
-            <div class="q-title">Rejection at Extreme</div>
-            <div class="q-question">Was there a clear rejection at the extreme?</div>
-          </div>
-        </div>
-        <p class="q-help">Decisive buyer/seller response at the level = failed auction signal. Accepted through = continuation signal.</p>
-        <div class="actions">
-          <button>Rejected</button>
-          <button>Accepted Through</button>
-          <button>No Signal</button>
-        </div>
-      </article>
+        <button class="action green" id="saveJournal">SAVE JOURNAL ENTRY</button>
+      </div>
 
-      <article class="card" data-question="5">
-        <div class="q-head">
-          <div class="q-num">Q5</div>
-          <div>
-            <div class="q-title">Value Area Location</div>
-            <div class="q-question">Is price inside or outside prior RTH value area?</div>
-          </div>
-        </div>
-        <p class="q-help">Outside value = directional auction in play. Inside value = balanced, mean reversion favoured.</p>
-        <div class="actions">
-          <button>Outside Value</button>
-          <button>Inside Value</button>
-          <button>At Edge</button>
-        </div>
-      </article>
+      <div class="form-card">
+        <div class="eyebrow">SAVED ENTRIES</div>
+        <div id="journalList" class="small">No journal entries yet.</div>
+      </div>
     </section>
-
-    <button class="reset" id="resetBtn">Reset Audit</button>
-    <p class="footer-note">For educational auction-market preparation only.</p>
   </main>
 
   <script>
-    const cards = document.querySelectorAll(".card");
-    const scoreEl = document.getElementById("score");
-    const barFill = document.getElementById("barFill");
-    const resetBtn = document.getElementById("resetBtn");
+    const state = {
+      overnight: null,
+      close: null,
+      extreme: null,
+      rejection: null,
+      value: null
+    };
 
-    function updateProgress() {
-      const completed = document.querySelectorAll(".card.active").length;
-      scoreEl.textContent = completed;
-      barFill.style.width = `${(completed / 5) * 100}%`;
-    }
+    const feedbackCopy = {
+      overnight: {
+        above: "→ Overnight explored higher — buyers advertising above prior value.",
+        below: "→ Overnight explored lower — sellers advertising below prior value.",
+        inside: "→ Overnight remained inside prior value — balanced auction."
+      },
+      close: {
+        yes: "→ Overnight confirmed the move. Continuation potential elevated.",
+        no: "→ Overnight rejected the move. Failed auction setup elevated."
+      },
+      extreme: {
+        yes: "→ Price is at a key structural level. Setup can be evaluated.",
+        no: "→ Price is not at the key level. Wait for it to come to you."
+      },
+      rejection: {
+        yes: "→ Sellers / buyers stepped in decisively. Auction is contested.",
+        no: "→ Price accepted through the level. Continuation is possible."
+      },
+      value: {
+        outside: "→ Price remains outside prior balance. Directional auction conditions.",
+        inside: "→ Price is back inside prior value. Mean reversion / range rules."
+      }
+    };
 
-    cards.forEach(card => {
-      const buttons = card.querySelectorAll("button");
+    const tabs = document.querySelectorAll(".tab");
+    const screens = document.querySelectorAll(".screen");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        screens.forEach(s => s.classList.remove("active"));
+
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.screen).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll(".question").forEach(question => {
+      const questionName = question.dataset.question;
+      const buttons = question.querySelectorAll(".option");
+      const feedback = question.querySelector(".feedback");
 
       buttons.forEach(button => {
         button.addEventListener("click", () => {
-          buttons.forEach(btn => btn.classList.remove("selected"));
-          button.classList.add("selected");
-          card.classList.add("active");
-          updateProgress();
+          const value = button.dataset.value;
+          const color = button.dataset.color;
+
+          state[questionName] = value;
+
+          buttons.forEach(btn => {
+            btn.classList.remove("selected", "green", "red", "amber", "neutral");
+          });
+
+          button.classList.add("selected", color);
+
+          question.classList.remove("green", "red", "amber", "neutral");
+          question.classList.add(color);
+
+          feedback.className = "feedback " + color;
+          feedback.textContent = feedbackCopy[questionName][value];
+
+          calculateSetup(false);
         });
       });
     });
 
-    card.addEventListener("dblclick", () => {
-      card.classList.remove("active");
-      card.querySelectorAll("button").forEach(btn => btn.classList.remove("selected"));
-      updateProgress();
+    document.getElementById("determineBtn").addEventListener("click", () => {
+      calculateSetup(true);
     });
-  });
 
-    resetBtn.addEventListener("click", () => {
-      cards.forEach(card => {
-        card.classList.remove("active");
-        card.querySelectorAll("button").forEach(btn => btn.classList.remove("selected"));
+    function calculateSetup(force) {
+      const resultBox = document.getElementById("resultBox");
+      const resultTitle = document.getElementById("resultTitle");
+      const resultSub = document.getElementById("resultSub");
+      const resultLabel = document.getElementById("resultLabel");
+      const resultText = document.getElementById("resultText");
+
+      const failedGrade = document.getElementById("failedGrade");
+      const continuationGrade = document.getElementById("continuationGrade");
+
+      const allAnswered = Object.values(state).every(Boolean);
+
+      if (!allAnswered) {
+        setResult("wait", "WAIT — COMPLETE AUDIT", "Incomplete Structure", "WAIT",
+          "Answer all five audit questions before assigning a setup edge.");
+
+        setGrade(failedGrade, "warn", "WAIT");
+        setGrade(continuationGrade, "warn", "WAIT");
+        return;
+      }
+
+      let failedScore = 0;
+      let continuationScore = 0;
+
+      if (state.overnight === "above" || state.overnight === "below") {
+        failedScore += 1;
+        continuationScore += 1;
+      }
+
+      if (state.close === "no") failedScore += 2;
+      if (state.close === "yes") continuationScore += 2;
+
+      if (state.extreme === "yes") {
+        failedScore += 2;
+        continuationScore += 2;
+      } else {
+        failedScore -= 2;
+        continuationScore -= 2;
+      }
+
+      if (state.rejection === "yes") failedScore += 2;
+      if (state.rejection === "no") continuationScore += 2;
+
+      if (state.value === "inside") failedScore += 2;
+      if (state.value === "outside") continuationScore += 2;
+
+      if (state.extreme === "no") {
+        setResult("wait", "WAIT — NO CLEAR EDGE", "Price Away From Structure", "CAUTION",
+          "Price is not currently testing a key prior-session extreme. Both failed auction and continuation setups require price to come to a structural level first. Stand aside until price reaches the level, then re-audit.");
+
+        setGrade(failedGrade, "warn", "WAIT");
+        setGrade(continuationGrade, "warn", "WAIT");
+        return;
+      }
+
+      if (failedScore >= 7 && failedScore > continuationScore) {
+        setResult("go", "FAILED AUCTION SETUP", "Mean Reversion Edge", "GO",
+          "Overnight probed outside prior value, failed to confirm, rejected the extreme, and returned inside balance. This favours fading the failed move back toward value, provided risk is clearly defined.");
+
+        setGrade(failedGrade, "good", "GO");
+        setGrade(continuationGrade, "bad", "NO");
+        return;
+      }
+
+      if (continuationScore >= 7 && continuationScore > failedScore) {
+        setResult("go", "CONTINUATION SETUP", "Acceptance / Directional Edge", "GO",
+          "Overnight explored directionally, confirmed with a close, accepted through the extreme, and remains outside prior balance. This favours trading with continuation, provided price holds acceptance.");
+
+        setGrade(failedGrade, "bad", "NO");
+        setGrade(continuationGrade, "good", "GO");
+        return;
+      }
+
+      setResult("wait", "WAIT — NO CLEAR EDGE", "Conflicted Structure", "CAUTION",
+        "The answers are mixed. Structure is not clean enough for a high-conviction setup. Wait for clearer acceptance, rejection, or a fresh test of the key level before taking risk.");
+
+      setGrade(failedGrade, failedScore >= continuationScore ? "warn" : "bad", failedScore >= continuationScore ? "MAYBE" : "NO");
+      setGrade(continuationGrade, continuationScore >= failedScore ? "warn" : "bad", continuationScore >= failedScore ? "MAYBE" : "NO");
+    }
+
+    function setResult(type, title, sub, label, text) {
+      const resultBox = document.getElementById("resultBox");
+
+      resultBox.className = "result " + type;
+
+      document.getElementById("resultTitle").textContent = title;
+      document.getElementById("resultSub").textContent = sub;
+      document.getElementById("resultLabel").textContent = label;
+      document.getElementById("resultText").textContent = text;
+    }
+
+    function setGrade(card, type, pillText) {
+      card.classList.remove("good", "warn", "bad");
+      card.classList.add(type);
+      card.querySelector(".pill").textContent = pillText;
+    }
+
+    const gammaBias = document.getElementById("gammaBias");
+    const spotPrice = document.getElementById("spotPrice");
+    const keyGamma = document.getElementById("keyGamma");
+    const gammaSaved = document.getElementById("gammaSaved");
+
+    function loadGamma() {
+      const saved = JSON.parse(localStorage.getItem("gammaNotes") || "null");
+
+      if (!saved) return;
+
+      gammaBias.value = saved.bias || "";
+      spotPrice.value = saved.spot || "";
+      keyGamma.value = saved.notes || "";
+
+      gammaSaved.innerHTML =
+        "<strong>Bias:</strong> " + (saved.bias || "Not set") + "<br>" +
+        "<strong>Spot:</strong> " + (saved.spot || "Not set") + "<br>" +
+        "<strong>Notes:</strong> " + (saved.notes || "No notes");
+    }
+
+    document.getElementById("saveGamma").addEventListener("click", () => {
+      const saved = {
+        bias: gammaBias.value,
+        spot: spotPrice.value,
+        notes: keyGamma.value
+      };
+
+      localStorage.setItem("gammaNotes", JSON.stringify(saved));
+      loadGamma();
+    });
+
+    const journalBias = document.getElementById("journalBias");
+    const journalNotes = document.getElementById("journalNotes");
+    const journalList = document.getElementById("journalList");
+
+    function loadJournal() {
+      const entries = JSON.parse(localStorage.getItem("journalEntries") || "[]");
+
+      if (!entries.length) {
+        journalList.textContent = "No journal entries yet.";
+        return;
+      }
+
+      journalList.innerHTML = entries.map(entry => {
+        return `
+          <div class="journal-entry">
+            <strong>${entry.date}</strong><br>
+            <strong>Bias:</strong> ${entry.bias || "Not set"}
+            <p>${entry.notes || "No notes"}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("saveJournal").addEventListener("click", () => {
+      const entries = JSON.parse(localStorage.getItem("journalEntries") || "[]");
+
+      entries.unshift({
+        date: new Date().toLocaleString(),
+        bias: journalBias.value,
+        notes: journalNotes.value
       });
 
-      updateProgress();
+      localStorage.setItem("journalEntries", JSON.stringify(entries));
+
+      journalBias.value = "";
+      journalNotes.value = "";
+
+      loadJournal();
     });
 
-    updateProgress();
+    loadGamma();
+    loadJournal();
+    calculateSetup(false);
   </script>
 </body>
 </html>
