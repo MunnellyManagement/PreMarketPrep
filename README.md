@@ -1,0 +1,15 @@
+# PreMarketPrep
+
+A simple pre-market preparation dashboard/site for market planning and trading preparation.
+
+## Live Site
+
+https://project-bv4lx.vercel.app
+
+## Files
+
+- `index.html` — main website file
+
+## Created by
+
+MunnellyManagement
