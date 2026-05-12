@@ -4,7 +4,7 @@ A simple pre-market preparation dashboard/site for market planning and trading p
 
 ## Live Site
 
-https://prremarketprep.vercel.app
+https://premarketprep.vercel.app
 
 ## Files
 
